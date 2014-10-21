@@ -8,7 +8,7 @@ console.log "Hello World"
 # React.renderComponent <Hello/>, document.getElementById('example')
 #
 
-data = [
+comments_json_response = [
   {author: "Evan Morikawa", text: "Check out this [awesome site](http://inboxapp.com)"},
   {author: "Michael Grinich", text: "*Sweet* stuff"}
 ]
@@ -27,7 +27,7 @@ Comment = React.createClass
 
 CommentList = React.createClass
   render: ->
-    comment_nodes = @props.data.map (comment) ->
+    comment_nodes = @props.data_from_props.map (comment) ->
       <Comment author={comment.author}>{comment.text}</Comment>
 
     <div className="commentList">
@@ -41,14 +41,26 @@ CommentForm = React.createClass
     </div>
 
 CommentBox = React.createClass
+
+  getInitialState: ->
+    my_data_var: []
+
+  # Called automatically by React when this is rendered
+  componentDidMount: ->
+    # setState will re-render whatever is needed
+    # There be "AJAX" here and "server delay"
+    setTimeout =>
+      @setState my_data_var: comments_json_response
+    , 500
+
   render: ->
     <div className="commentBox">
       <h1>Comments!!!</h1>
-      <CommentList data={@props.data} />
+      <CommentList data_from_props={@state.my_data_var} />
       <CommentForm />
     </div>
 
 React.renderComponent(
-  <CommentBox data={data}/>,
+  <CommentBox url="comments.json"/>,
   document.getElementById('app')
 )
