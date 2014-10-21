@@ -8,10 +8,16 @@ console.log "Hello World"
 # React.renderComponent <Hello/>, document.getElementById('example')
 #
 
+data = [
+  {author: "Evan Morikawa", text: "Check out this [awesome site](http://inboxapp.com)"},
+  {author: "Michael Grinich", text: "*Sweet* stuff"}
+]
+
 converter = new Showdown.converter()
 Comment = React.createClass
   render: ->
-    raw_post = converter.makeHtml @props.children
+    raw_post = converter.makeHtml @props.children.toString()
+
     <div className="comment">
       <h2 className="commentAuthor">
         {@props.author}
@@ -21,10 +27,11 @@ Comment = React.createClass
 
 CommentList = React.createClass
   render: ->
+    comment_nodes = @props.data.map (comment) ->
+      <Comment author={comment.author}>{comment.text}</Comment>
+
     <div className="commentList">
-      Hello, world! I am a CommentList.
-      <Comment author="Pete Hunt">This is [one](http://inboxapp.com) comment</Comment>
-      <Comment author="Jordan Walke">This is *another* comment</Comment>
+      {comment_nodes}
     </div>
 
 CommentForm = React.createClass
@@ -41,4 +48,7 @@ CommentBox = React.createClass
       <CommentForm />
     </div>
 
-React.renderComponent <CommentBox data={data}/>, document.getElementById('app')
+React.renderComponent(
+  <CommentBox data={data}/>,
+  document.getElementById('app')
+)
